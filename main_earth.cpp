@@ -172,7 +172,7 @@ struct MyApp : public App
     imageData[4] = Image("../texture/EarthTexture.jpeg");
     imageData[5] = Image("../texture/EarthTexture2.jpeg");
     imageData[6] = Image("../texture/EarthTexture3.png");
-    imageData[7] = Image("../texture/direct_human_2013_impact.tif");
+    imageData[7] = Image("../texture/image_nutrient_pollution_2003_impact.jpeg");
  
 
     for (int i = 0 ; i < senario; i++){
