@@ -18,11 +18,13 @@
 #include "al_ext/assets3d/al_Asset.hpp"
 #include "al/sphere/al_SphereUtils.hpp"
 #include "al/graphics/al_Image.hpp"
+#include "al_ext/statedistribution/al_CuttleboneStateSimulationDomain.hpp"
+#include "al/sound/al_Reverb.hpp"
 
 
-#define nodeCount (500)
+#define nodeCount (300)
 #define Nb (1) // Number of cells
-#define Np (500) // Number of spikes
+#define Np (50) // Number of spikes
 
 template <typename T>
 T mtof(T m) {
