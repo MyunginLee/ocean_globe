@@ -1,6 +1,8 @@
 // Vids headers
 #include <cmath>
-#include "al/app/al_App.hpp"
+// #include "al/app/al_App.hpp"
+#include "al/app/al_DistributedApp.hpp"
+
 #include "al/graphics/al_Shapes.hpp"
 #include "al/math/al_Functions.hpp"
 #include "al/math/al_Random.hpp"
