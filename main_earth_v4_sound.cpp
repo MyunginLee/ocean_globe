@@ -81,7 +81,7 @@ struct MyApp : public App
   Parameter gain{"Light", 1, 0, 1};
   Parameter shift{"Shift", 0, 0, 13};
   Parameter rot{"Rotate", 0, 0, 360};
-  Parameter year{"Year", 2003, 2003, 2013};
+  Parameter year{"Year", 2003, 2003, 2012};
 
 
   // Boid boids[Nb];
@@ -107,7 +107,7 @@ struct MyApp : public App
   float back_color_phase = 1;
   float point_dist = 1.01 * vid_radius;
   bool draw_data = false;
-  static const int senario = 12;
+  static const int senario = 13;
   static const int years = 11;
 
   Image oceanData[years];
@@ -209,9 +209,10 @@ struct MyApp : public App
           for (int column = 0; column < data_W; column++) {
             auto pixel = oceanData[d].at(column, data_H - row - 1);       
 
-            // if( pixel.r > 0 && pixel.r < 170)
-            if( pixel.r < 170)
-            // if( pixel.r > 0)
+            // if( pixel.r > 80)
+            //  && pixel.r < 170)
+            // if( pixel.r < 170)
+            // if( pixel.r > 0.1)
             {
             // {  
               double phi = column * M_2PI / data_W;
@@ -270,15 +271,16 @@ struct MyApp : public App
     imageData[2] = Image("../texture/EarthTexture3.png");
     // imageData[3] = Image("../texture/EarthTexture4.jpg");
     // imageData[4] = Image("../texture/EarthTexture5.jpeg");
-    imageData[3] = Image("../texture/sst/equi_sst_2004.jpeg");
-    imageData[4] = Image("../texture/sst/equi_sst_2005.jpeg");
-    imageData[5] = Image("../texture/sst/equi_sst_2006.jpeg");
-    imageData[6] = Image("../texture/sst/equi_sst_2008.jpeg");
-    imageData[7] = Image("../texture/sst/equi_sst_2009.jpeg");
-    imageData[8] = Image("../texture/sst/equi_sst_2010.jpeg"); 
-    imageData[9] = Image("../texture/sst/equi_sst_2011.jpeg");
-    imageData[10] = Image("../texture/sst/equi_sst_2012.jpeg");
-    imageData[11] = Image("../texture/sst/equi_sst_2013.jpeg");
+    imageData[3] = Image("../texture/sst/equi_sst_2003.jpeg");
+    imageData[4] = Image("../texture/sst/equi_sst_2004.jpeg");
+    imageData[5] = Image("../texture/sst/equi_sst_2005.jpeg");
+    imageData[6] = Image("../texture/sst/equi_sst_2006.jpeg");
+    imageData[7] = Image("../texture/sst/equi_sst_2008.jpeg");
+    imageData[8] = Image("../texture/sst/equi_sst_2009.jpeg");
+    imageData[9] = Image("../texture/sst/equi_sst_2010.jpeg"); 
+    imageData[10] = Image("../texture/sst/equi_sst_2011.jpeg");
+    imageData[11] = Image("../texture/sst/equi_sst_2012.jpeg");
+    imageData[12] = Image("../texture/sst/equi_sst_2013.jpeg");
     for (int i = 0 ; i < senario; i++){
       tex[i].create2D(imageData[i].width(), imageData[i].height());
       tex[i].submit(imageData[i].array().data(), GL_RGBA, GL_UNSIGNED_BYTE);  
