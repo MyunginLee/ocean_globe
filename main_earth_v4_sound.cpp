@@ -92,7 +92,7 @@ struct MyApp : public App
 
   ShaderProgram shader;
   float vid_radius = 5;
-  float point_radius = 0.1;
+  float point_radius = 0.3;
   float force;
   bool box_draw = true;
   Vec3f unitVector;
@@ -212,7 +212,7 @@ struct MyApp : public App
             // if( pixel.r > 80)
             //  && pixel.r < 170)
             // if( pixel.r < 170)
-            // if( pixel.r > 0.1)
+            if( pixel.r > 10)
             {
             // {  
               double phi = column * M_2PI / data_W;
@@ -230,8 +230,9 @@ struct MyApp : public App
               // pic[d].color(HSV(pixel.r/ 100, 1, 1));
               // pic[d].color(HSV( 1 - pixel.r/ 100, 0.8-pixel.r/ 30, 0.6 + atan(pixel.r/ 240)));
 
-
-              pic[d].color(HSV( 0.6 * sin(pixel.r/ 100), 0.8-pixel.r/ 300, 0.6 + atan(pixel.r/ 240)));
+              // pic[d].color(HSV( 0.6 * (pixel.r/ 100), 0.8-pixel.r/ 300, 0.6 + atan(pixel.r/ 300)));
+              pic[d].color(RGB( pixel.r/ 100, pixel.r/ 200, pixel.r/300 ));
+              // pic[d].color(HSV( 0.6 * sin(pixel.r/ 100), 0.8-pixel.r/ 300, 0.6 + atan(pixel.r/ 300)));
               // pic[d].color(HSV( pixel.r/10, 0.6 + pixel.r / 240, 0.6 + pixel.r / 240));
               // cout << pixel.r << atan(pixel.r) << endl;
           }
@@ -461,17 +462,17 @@ struct MyApp : public App
 
     point_mesh.reset(); ////////////////////////////////////////////////////////////alive 
     
-    if(box_draw){
-      texture.bind();
-      for (auto s : points)
-        s.draw(g, point_mesh);
+    // if(box_draw){
+    //   texture.bind();
+    //   for (auto s : points)
+    //     s.draw(g, point_mesh);
       
-      g.meshColor();
-      g.shader(shader);
-      g.shader().uniform("halfSize", point_radius);
-      g.draw(point_mesh);
-      texture.unbind();
-    }
+    //   g.meshColor();
+    //   g.shader(shader);
+    //   g.shader().uniform("halfSize", point_radius);
+    //   g.draw(point_mesh);
+    //   texture.unbind();
+    // }
     // back_mesh.reset(); /////////////////////////////////////////////////////////////
     // for (int i = 0; i < nodeCount; i++)
     {
@@ -494,7 +495,7 @@ struct MyApp : public App
       float pointssize = nav().pos().mag();
       if (pointssize < 1)
         pointssize = 1; 
-      g.pointSize(50/nav().pos().mag());
+      g.pointSize(50/nav().pos().magSqr());
       g.translate(Vec3f(shift,0,0));
       g.draw(target);
       g.popMatrix();
