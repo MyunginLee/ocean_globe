@@ -79,12 +79,12 @@ proj = moolweide2geodetic(img_data, lon_0, R) # applying Mollweide inverse tranf
 # b_proj = moolweide2geodetic(b, lon_0, R) # applying Mollweide inverse tranformation on the blue grid
 
 
-# rgb_img = Image.fromarray((np.dstack((img_data))).astype(np.uint8)) # recombing each color layer into an image
+rgb_img = Image.fromarray((np.dstack((img_data))).astype(np.uint8)) # recombing each color layer into an image
 path = '../texture/sst/test.tiff' # https://map-projections.net/img/jpg/mollweide.jpg
-img_data.save(path)
+rgb_img.save(path)
 
 # rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/equirectangular_nutrient_pollution_2003_impact.png')
 # rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/equirectangular_slr_2003.png')
 
-del img_data
+del rgb_img, img_data, img_data
 
