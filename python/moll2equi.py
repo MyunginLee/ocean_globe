@@ -2,6 +2,8 @@ import numpy as np
 from math import sin, cos, pi, sqrt, asin
 from PIL import Image
 from scipy import interpolate
+import cv2
+
 Image.MAX_IMAGE_PIXELS = None
 
 def inv_mollweide(x, y, lon_0, R):
@@ -51,40 +53,35 @@ def moolweide2geodetic(data, lon_0, R):
     
     return GD # EDIT
 
-# path = '../texture/sst/sst_2003.jpeg' # https://map-projections.net/img/jpg/mollweide.jpg
-path = '/Users/ben/Desktop/projects/sensorium/chi_impact/sst/sst_2013_raw.tif'
-# path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/image_nutrient_pollution_2003_impact.jpeg'
-# path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/slr_2003.jpeg'
-
-# Read image
-img = Image.open(path)
-width, height = img.size
-
-# newsize = (int(width/30), int(height/30)) #decreasing the quality to speed up the testing process
-newsize = (int(width/3), int(height/3)) #decreasing the quality to speed up the testing process
-img = img.resize(newsize)
-
-# img_data = np.transpose(np.array(img), (2, 0, 1))
-img_data = np.array(img)
-
-# r = img_data[0, :, :]
-# g = img_data[1, :, :]
-# b = img_data[2, :, :]
-
-lon_0, R = 0, 1
-
-proj = moolweide2geodetic(img_data, lon_0, R) # applying Mollweide inverse tranformation on the red grid
-# r_proj = moolweide2geodetic(r, lon_0, R) # applying Mollweide inverse tranformation on the red grid
-# g_proj = moolweide2geodetic(g, lon_0, R) # applying Mollweide inverse tranformation on the green grid
-# b_proj = moolweide2geodetic(b, lon_0, R) # applying Mollweide inverse tranformation on the blue grid
-
-
-# rgb_img = Image.fromarray((np.dstack((img_data))).astype(np.uint8)) # recombing each color layer into an image
-path = '../texture/sst/test.tiff' # https://map-projections.net/img/jpg/mollweide.jpg
-img_data.save(path)
-
-# rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/equirectangular_nutrient_pollution_2003_impact.png')
-# rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/equirectangular_slr_2003.png')
-
-del img_data
-
+# years
+for year in range(2003, 2014):
+    print(year)
+    # path = '../texture/sst/sst_2003.jpeg' # https://map-projections.net/img/jpg/mollweide.jpg
+    path = '/Users/ben/Desktop/projects/sensorium/chi_impact/sst/sst_{}_raw.tif'.format(year)
+    # path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/image_nutrient_pollution_2003_impact.jpeg'
+    # path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/slr_2003.jpeg'
+    # Read image
+    img = Image.open(path)
+    width, height = img.size
+    img_data = np.array(img)
+    # newsize = (int(width/30), int(height/30)) #decreasing the quality to speed up the testing process
+    # newsize = (500, 250) #decreasing the quality to speed up the testing process
+    # img = cv2.resize(img_data, dsize=(500,250), interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(img_data, dsize=(1500,750), interpolation=cv2.INTER_CUBIC)
+    lon_0, R = 0, 1
+    tmp = moolweide2geodetic(img, lon_0, R) # applying Mollweide inverse tranformation on the red grid
+    proj = np.array(tmp, dtype='uint8')
+    # im = Image.fromarray(proj)
+    # blur = cv2.GaussianBlur(proj, (3,3), 1,1)
+    blur = cv2.medianBlur(proj, 5)
+    im = Image.fromarray(blur)
+    # rgb_img = Image.fromarray((np.dstack((img_data))).astype(np.uint8)) # recombing each color layer into an image
+    path = '../texture/sst/test_median/test_sst_{}.png'.format(year) # https://map-projections.net/img/jpg/mollweide.jpg
+    # img_data.save(path)
+    im.save(path)
+    # cv2.imwrite(path, proj)
+    # rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/equirectangular_nutrient_pollution_2003_impact.png')
+    # rgb_img.save('/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/equirectangular_slr_2003.png')
+    del img_data, blur, im, tmp
+else:
+    print("done")
