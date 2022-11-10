@@ -36,8 +36,7 @@ def moolweide2geodetic(data, lon_0, R):
             
             i_lat = list(lat).index(min(lat, key=lambda x:abs(x-coord[0]))) # retrieving new row index
             i_lon = list(lon).index(min(lon, key=lambda x:abs(x-coord[1]))) # retrieving new colmn index
-            if data[i,j] < 0:
-                data[i,j] = 1.5
+            
             data_proj[i_lat, i_lon] = data[i, j] # EDIT
     
     data_proj = np.ma.masked_invalid(data_proj) # EDIT
@@ -55,10 +54,10 @@ def moolweide2geodetic(data, lon_0, R):
     return GD # EDIT
 
 # years
-for year in range(2003, 2013):
+for year in range(2003, 2014):
     print(year)
     # path = '../texture/sst/sst_2003.jpeg' # https://map-projections.net/img/jpg/mollweide.jpg
-    path = '/Users/ben/Desktop/projects/sensorium/chi_scaled/sst/sst_{}_rescaled.tif'.format(year)
+    path = '/Users/ben/Desktop/projects/sensorium/chi_impact/oa/oa_{}_impact.tif'.format(year)
     # path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/nutrient_pollution/image/image_nutrient_pollution_2003_impact.jpeg'
     # path = '/home/ben/Desktop/Projects/Sensorium/data/cumulative_human_impacts/climate/ocean_acidification/slr_2003.jpeg'
     # Read image
@@ -68,17 +67,17 @@ for year in range(2003, 2013):
     # newsize = (int(width/30), int(height/30)) #decreasing the quality to speed up the testing process
     # newsize = (500, 250) #decreasing the quality to speed up the testing process
     # img = cv2.resize(img_data, dsize=(500,250), interpolation=cv2.INTER_CUBIC)
-    img = cv2.resize(img_data, dsize=(int(width/20),int(width/40)), interpolation=cv2.INTER_CUBIC)
+    img = cv2.resize(img_data, dsize=(2000,1000), interpolation=cv2.INTER_CUBIC)
     lon_0, R = 0, 1
     tmp = moolweide2geodetic(img, lon_0, R) # applying Mollweide inverse tranformation on the red grid
     proj = np.array(tmp, dtype='uint8')
     # im = Image.fromarray(proj)
     # blur = cv2.GaussianBlur(proj, (3,3), 1,1)
+    # blur = cv2.medianBlur(proj, 3)
     blur = proj
-    # blur = cv2.medianBlur(proj, 5)
     im = Image.fromarray(blur)
     # rgb_img = Image.fromarray((np.dstack((img_data))).astype(np.uint8)) # recombing each color layer into an image
-    path = '../texture/sst/sst_rescaled_020_{}.png'.format(year) # https://map-projections.net/img/jpg/mollweide.jpg
+    path = '../texture/oa/oa_{}_impact.jpg'.format(year) # https://map-projections.net/img/jpg/mollweide.jpg
     # img_data.save(path)
     im.save(path)
     # cv2.imwrite(path, proj)
