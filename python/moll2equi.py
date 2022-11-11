@@ -55,7 +55,7 @@ def moolweide2geodetic(data, lon_0, R):
     return GD # EDIT
 
 # years
-for year in range(2003, 2013):
+for year in range(2010, 2013):
     print(year)
     # path = '../texture/sst/sst_2003.jpeg' # https://map-projections.net/img/jpg/mollweide.jpg
     path = '/Users/ben/Desktop/projects/sensorium/chi_scaled/sst/sst_{}_rescaled.tif'.format(year)

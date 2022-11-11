@@ -81,7 +81,7 @@ struct MyApp : public App
   Parameter interactor{"Face", 0.1, 0, 12};
   Parameter gain{"Light", 1, 0, 1};
   Parameter shift{"Shift", 0, 0, 13};
-  Parameter rot{"Rotate", 1, 0, 2};
+  Parameter rot{"Scenario", 1, 0, 7};
   Parameter year{"Year", 2003, 2003, 2012};
 
 
@@ -109,7 +109,7 @@ struct MyApp : public App
   float point_dist = 1.01 * vid_radius;
   bool draw_data = false;
   bool molph = false;
-  static const int senario = 13;
+  static const int senario = 3;
   static const int years = 11;
 
   Image oceanData[years];
@@ -153,8 +153,11 @@ struct MyApp : public App
     for (int d = 0; d< years; d++){
       ostringstream ostr;
       // ostr << "../texture/sst/equi_sst_" << d+2003 << ".tiff";
-      ostr << "../texture/sst/test_median/sst_" << d+2003 << ".jpg";  // ** change stressor
+      // ostr << "../texture/sst/test_median/sst_" << d+2003 << ".jpg";  // ** change stressor
       // ostr << "../texture/direct_human/test_median/np_" << d+2003 << ".jpg";
+      // ostr << "../texture/sst/test_median/test_0.5_sst_" << d+2003 << ".png";  // ** change stressor
+      // ostr << "../texture/sst/sst_05_" << d+2003 << "_equi.png";  // ** change stressor
+      ostr << "../texture/nutrient/nutrient_pollution_impact_010_" << d+2003 << "_equi.png";  // ** change stressor
       char *filename = new char[ostr.str().length()+1];
       strcpy(filename, ostr.str().c_str());
       oceanData[d] = Image(filename);
@@ -234,7 +237,7 @@ struct MyApp : public App
               // pic[d].color(HSV( 1 - pixel.r/ 100, 0.8-pixel.r/ 30, 0.6 + atan(pixel.r/ 240)));
 
               // pic[d].color(HSV( 0.6 * (pixel.r/ 100), 0.8-pixel.r/ 300, 0.6 + atan(pixel.r/ 300)));
-              pic[d].color(RGB( pixel.r/ 100, pixel.r/ 200, pixel.r/300 ));
+              pic[d].color(RGB( pixel.r/ 10, pixel.r/ 20, pixel.r/30 ));
 
               // pic[d].color(HSV( 0.6 * sin(pixel.r/ 100), 0.8-pixel.r/ 300, 0.6 + atan(pixel.r/ 300)));
               // pic[d].color(HSV( pixel.r/10, 0.6 + pixel.r / 240, 0.6 + pixel.r / 240));
@@ -274,18 +277,7 @@ struct MyApp : public App
     imageData[0] = Image("../texture/EarthTexture3.png");
     imageData[1] = Image("../texture/EarthTexture2.png");
     imageData[2] = Image("../texture/EarthTexture1.jpeg");
-    // imageData[3] = Image("../texture/EarthTexture4.jpg");
-    // imageData[4] = Image("../texture/EarthTexture5.jpeg");
-    imageData[3] = Image("../texture/sst/equi_sst_2003.jpeg");
-    imageData[4] = Image("../texture/sst/equi_sst_2004.jpeg");
-    imageData[5] = Image("../texture/sst/equi_sst_2005.jpeg");
-    imageData[6] = Image("../texture/sst/equi_sst_2006.jpeg");
-    imageData[7] = Image("../texture/sst/equi_sst_2008.jpeg");
-    imageData[8] = Image("../texture/sst/equi_sst_2009.jpeg");
-    imageData[9] = Image("../texture/sst/equi_sst_2010.jpeg"); 
-    imageData[10] = Image("../texture/sst/equi_sst_2011.jpeg");
-    imageData[11] = Image("../texture/sst/equi_sst_2012.jpeg");
-    imageData[12] = Image("../texture/sst/equi_sst_2013.jpeg");
+
     for (int i = 0 ; i < senario; i++){
       tex[i].create2D(imageData[i].width(), imageData[i].height());
       tex[i].submit(imageData[i].array().data(), GL_RGBA, GL_UNSIGNED_BYTE);  
@@ -369,7 +361,7 @@ struct MyApp : public App
       return;
 
     dt = time;
-    timer += 10*dt;
+    timer += 200*dt;
     
     
     if(molph){
@@ -502,11 +494,13 @@ struct MyApp : public App
     if(draw_data){
     // draw ocean data samples
       g.pushMatrix();
+      g.blending(true);
+      g.blendTrans();
       g.meshColor();
       float pointssize = nav().pos().mag();
       if (pointssize < 1)
         pointssize = 1; 
-      g.pointSize(50/nav().pos().magSqr());
+      g.pointSize(500/nav().pos().magSqr());
       g.translate(Vec3f(shift,0,0));
       g.draw(target);
       g.popMatrix();
@@ -621,12 +615,12 @@ struct MyApp : public App
     auto GUIdomain = GUIDomain::enableGUI(defaultWindowDomain());
     auto &gui = GUIdomain->newGUI();
     gui.add(time);
-    gui.add(alignment);
+    // gui.add(alignment);
     gui.add(frequency);
     gui.add(modulation);
-    gui.add(interactor);
+    // gui.add(interactor);
     gui.add(gain);
-    gui.add(shift);
+    // gui.add(shift);
     gui.add(rot);
     gui.add(year);
 
