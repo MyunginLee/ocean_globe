@@ -3,8 +3,7 @@ os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 import torch
 import numpy as np
-# import cupy as np
-from numba import njit, cuda, vectorize, float64
+from numba import jit
 from math import sin, cos, pi, sqrt, asin
 from PIL import Image
 from scipy import interpolate
@@ -14,31 +13,28 @@ import cv2
 torch.__version__
 torch.cuda.is_available()
 print(torch.cuda.is_available())
-device = "cuda" if torch.cuda.is_available() else "cpu" 
+device = "cpu" 
 print("Using {} device".format(device))
 
 Image.MAX_IMAGE_PIXELS = None
-
-@njit( parallel=True)
-def inv_mollweide(x, y):
+# @jit(target_backend ="cuda")
+def inv_mollweide(x, y, lon_0, R):
     """Mollweide inverse tranformation"""
-    theta = asin(y/(sqrt(2))) # auxiliary angle
+    
+    theta = asin(y/(R*sqrt(2))) # auxiliary angle
     
     lat = asin((2*theta+sin(2*theta))/pi) # latitude
-    lon = (pi*x)/(2*sqrt(2)*cos(theta)) # longitude
+    lon = lon_0 + (pi*x)/(2*R*sqrt(2)*cos(theta)) # longitude
     
     return lat, lon
 
-# @jit(target_backend ="cuda")
-# @cuda.jit
-@njit( parallel=True)
-def moolweide2geodetic(data):
-    print("data: ",type(data))
+def moolweide2geodetic(data, lon_0, R):
     """Applies Mollweide inverse tranformation on each cell of the grid"""
+    
     n_lat, n_lon = data.shape # retrieving number of rows and columns
     
-    x = np.linspace(-2*sqrt(2), 2*sqrt(2), n_lon) # x definition domain
-    y = np.linspace(-sqrt(2), sqrt(2), n_lat) # y definition domain
+    x = np.linspace(-2*R*sqrt(2), 2*R*sqrt(2), n_lon) # x definition domain
+    y = np.linspace(-R*sqrt(2), R*sqrt(2), n_lat) # y definition domain
     
     lon = np.linspace(-pi, pi, n_lon) # longitude definition domain
     lat = np.linspace(-pi/2, pi/2, n_lat) # latitude definition domain
@@ -48,7 +44,7 @@ def moolweide2geodetic(data):
     for i in range(n_lat):
         for j in range(n_lon):
             
-            coord = inv_mollweide(x[j], y[i]) # applying Mollweide inverse tranformation on cell (i, j)
+            coord = inv_mollweide(x[j], y[i], lon_0, R) # applying Mollweide inverse tranformation on cell (i, j)
             
             i_lat = list(lat).index(min(lat, key=lambda x:abs(x-coord[0]))) # retrieving new row index
             i_lon = list(lon).index(min(lon, key=lambda x:abs(x-coord[1]))) # retrieving new colmn index
@@ -66,8 +62,7 @@ def moolweide2geodetic(data):
                               (LON, LAT), method='linear') # EDIT
     
     GD[np.isnan(GD)] = 0 # EDIT
-    print("GD: ", type(GD))
-
+    
     return GD # EDIT
 
 # years
@@ -90,7 +85,8 @@ for year in range(2013, 2014):
     # img = cv2.resize(img_data, dsize=(2574,1287), interpolation=cv2.INTER_CUBIC)
     # img = cv2.resize(img_data, dsize=(int(width/10),int(width/20)), interpolation=cv2.INTER_CUBIC)
     img = cv2.resize(img_data, dsize=(500,250), interpolation=cv2.INTER_CUBIC)
-    tmp = moolweide2geodetic(img) # applying Mollweide inverse tranformation on the red grid
+    lon_0, R = 0, 1
+    tmp = moolweide2geodetic(img, lon_0, R) # applying Mollweide inverse tranformation on the red grid
     proj = np.array(tmp, dtype='uint8')
     # im = Image.fromarray(proj)
     # blur = cv2.GaussianBlur(proj, (3,3), 1,1)
